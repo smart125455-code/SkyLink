@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#4257e8">
+  <title>SkyLink — Connect the World</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">S</span><span>SkyLink</span></a>
+    <span class="tagline">Connect the World</span>
+  </header>
+
+  <main class="shell">
+    <section id="auth-view" class="auth-layout">
+      <div class="intro">
+        <div class="eyebrow">YOUR WORLD, CONNECTED</div>
+        <h1>মানুষের সঙ্গে যুক্ত হোন।<br><span>নিজের গল্প শেয়ার করুন।</span></h1>
+        <p>SkyLink-এ নিজের প্রোফাইল তৈরি করুন, পোস্ট লিখুন এবং অন্যদের পোস্টে মন্তব্য করুন।</p>
+        <div class="feature-row"><span>✦</span> Email verification সহ অ্যাকাউন্ট</div>
+        <div class="feature-row"><span>✦</span> প্রোফাইল ও পোস্ট</div>
+        <div class="feature-row"><span>✦</span> পরে ফোন OTP যোগ করার সুযোগ</div>
+      </div>
+
+      <div class="auth-card">
+        <div class="tabs">
+          <button class="tab active" id="show-login" type="button">লগইন</button>
+          <button class="tab" id="show-signup" type="button">নতুন অ্যাকাউন্ট</button>
+        </div>
+
+        <form id="login-form" class="form">
+          <h2>আবার স্বাগতম</h2>
+          <label for="login-email">Gmail / ইমেইল</label>
+          <input id="login-email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          <label for="login-password">পাসওয়ার্ড</label>
+          <input id="login-password" type="password" autocomplete="current-password" minlength="6" placeholder="কমপক্ষে ৬ অক্ষর" required>
+          <button class="primary" type="submit">লগইন করুন</button>
+          <button class="text-button" id="forgot-password" type="button">পাসওয়ার্ড ভুলে গেছেন?</button>
+        </form>
+
+        <form id="signup-form" class="form hidden">
+          <h2>SkyLink-এ যোগ দিন</h2>
+          <label for="signup-name">আপনার নাম</label>
+          <input id="signup-name" type="text" autocomplete="name" maxlength="60" placeholder="আপনার নাম" required>
+          <label for="signup-email">Gmail / ইমেইল</label>
+          <input id="signup-email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          <label for="signup-password">পাসওয়ার্ড</label>
+          <input id="signup-password" type="password" autocomplete="new-password" minlength="6" placeholder="কমপক্ষে ৬ অক্ষর" required>
+          <button class="primary" type="submit">অ্যাকাউন্ট তৈরি করুন</button>
+          <p class="fineprint">অ্যাকাউন্ট চালু করতে আপনার ইমেইলে পাঠানো verification link খুলতে হবে।</p>
+        </form>
+        <div id="auth-message" class="message" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="verify-view" class="notice-card hidden">
+      <div class="notice-icon">✉</div>
+      <h1>ইমেইল যাচাই করুন</h1>
+      <p id="verify-copy">আপনার ইমেইলে verification link পাঠানো হয়েছে।</p>
+      <p>Inbox না পেলে Spam/Junk ফোল্ডারও দেখুন। যাচাই করার পর নিচের বাটনে চাপ দিন।</p>
+      <div class="actions">
+        <button class="primary" id="check-verified" type="button">আমি ইমেইল যাচাই করেছি</button>
+        <button class="secondary" id="resend-verification" type="button">আবার ইমেইল পাঠান</button>
+        <button class="text-button" id="verify-logout" type="button">লগআউট</button>
+      </div>
+      <div id="verify-message" class="message" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="app-view" class="app-layout hidden">
+      <aside class="sidebar">
+        <div class="mini-profile"><div id="avatar" class="avatar">S</div><div><strong id="profile-name">SkyLink User</strong><small id="profile-email"></small></div></div>
+        < class="nav-links"><a class="selected" href="#feed">⌂ <span>হোম</span></a><form id="post-form" class="composer" id="compose">< href="#profilemmmm
+        <button id="logout-button" class="secondary full">লগআউট</button>
+      </aside>
+
+      <div class="feed-column">
+        <section class="welcome-banner">
+          <div><div class="eyebrow">WELCOME TO SKYLINK</div><h1>হ্যালো, <span id="welcome-name">বন্ধু</span> 👋</h1><p>আজ আপনার মনে কী আছে? শেয়ার করুন।</p></div>
+          <div class="banner-orb">S</div>
+        </section>
+<form id="post-form" class="composer">
+          <div class="composer-heading"><div class="avatar small" id="composer-avatar">S</div><strong>নতুন পোস্ট লিখুন</strong></div>
+          <textarea id="post-text" maxlength="2000" rows="4" placeholder="আপনার ভাবনা শেয়ার করুন..." required></textarea>
+          <div class="composer-footer"><small>সর্বোচ্চ ২০০০ অক্ষর</small><button class="primary" type="submit">পোস্ট করুন ↗</button></div>
+        </form>
+
+        <div class="section-heading"><h2>সাম্প্রতিক পোস্ট</h2><span class="live-dot">লাইভ ফিড</span></div>
+        <div id="feed-list" class="feed-list"><div class="empty-state">পোস্ট লোড হচ্ছে...</div></div>
+      </div>
+
+      <aside class="right-panel">
+        <div class="panel-card"><div class="panel-symbol">🌐</div><h3>SkyLink কমিউনিটি</h3><p>বন্ধুদের সঙ্গে যুক্ত হোন এবং নিজের গল্প শেয়ার করুন।</p></div>
+        <div class="panel-card privacy"><h3>🔒 আপনার নিরাপত্তা</h3><p>পাসওয়ার্ড কখনো প্রোফাইলে রাখা হয় না। ফোন নম্বর সংগ্রহ করা হচ্ছে না।</p></div>
+        <div class="panel-card"><h3>আপনার প্রোফাইল</h3><p>নাম: <strong id="side-name">—</strong></p><p>ইমেইল যাচাই: <strong class="verified-label">✓ Verified</strong></p><p class="fineprint">পরবর্তী সংস্করণে ছবি, Bio, বন্ধু, স্টোরি ও রিলস যোগ করা যাবে।</p></div>
+      </aside>
+    </section>
+  </main>
+  <footer>© <span id="year"></span> SkyLink · Connect the World, Share Your Life.</footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
