@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+content://com.android.providers.downloads.documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2FSkyLink_Firebase_Starter%2FSkyLink%2Fapp.jscontent://com.android.providers.downloads.documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2FSkyLink_Firebase_Starter%2FSkyLink%2Fapp.jscontent://com.android.providers.downloads.documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2FSkyLink_Firebase_Starter%2FSkyLink%2Fapp.jsimport { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import {
   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
   sendEmailVerification, sendPasswordResetEmail, onAuthStateChanged,
@@ -243,3 +243,141 @@ if (!isConfigured) {
     showView("auth-view");
   }
 }
+
+// ===============================
+// SkyLink Profile & Bio
+// ===============================
+
+function showProfileSection(section) {
+  $("feed-view").classList.toggle("hidden", section !== "feed");
+  $("profile-view").classList.toggle("hidden", section !== "profile");
+}
+
+function safeImageUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function updateProfilePreview(data = {}) {
+  const name = data.displayName || nameFromUser(currentUser);
+  const photo = safeImageUrl(data.photoURL || "");
+  const cover = safeImageUrl(data.coverURL || "");
+
+  $("profile-preview-name").textContent = name;
+  $("profile-preview-bio").textContent = data.bio || "এখনো কোনো Bio লেখা হয়নি।";
+
+  const avatar = $("profile-preview-avatar");
+  avatar.textContent = name.slice(0, 1).toUpperCase();
+  avatar.style.backgroundImage = photo ? `url("${photo}")` : "none";
+  avatar.style.backgroundSize = "cover";
+  avatar.style.backgroundPosition = "center";
+
+  const coverElement = $("profile-preview-cover");
+  coverElement.style.backgroundImage = cover ? `url("${cover}")` : "none";
+  coverElement.style.backgroundSize = "cover";
+  coverElement.style.backgroundPosition = "center";
+}
+
+async function loadProfile() {
+  if (!currentUser) return;
+
+  try {
+    const userRef = doc(db, "users", currentUser.uid);
+    const profileSnap = await getDoc(userRef);
+    const data = profileSnap.exists() ? profileSnap.data() : {};
+
+    $("edit-display-name").value =
+      data.displayName || nameFromUser(currentUser);
+
+    $("edit-bio").value = data.bio || "";
+    $("edit-birthday").value = data.birthday || "";
+    $("edit-country").value = data.country || "";
+    $("edit-district").value = data.district || "";
+    $("edit-photo-url").value = data.photoURL || "";
+    $("edit-cover-url").value = data.coverURL || "";
+
+    updateProfilePreview({
+      ...data,
+      displayName: data.displayName || nameFromUser(currentUser)
+    });
+  } catch (error) {
+    say($("profile-message"), cleanError(error));
+  }
+}
+
+$("profile-link").addEventListener("click", async (event) => {
+  event.preventDefault();
+  showProfileSection("profile");
+  await loadProfile();
+});
+
+$("home-link").addEventListener("click", (event) => {
+  event.preventDefault();
+  showProfileSection("feed");
+});
+
+$("profile-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!currentUser?.emailVerified) {
+    return say($("profile-message"), "আগে ইমেইল যাচাই করুন।");
+  }
+
+  const displayName = $("edit-display-name").value.trim();
+  const bio = $("edit-bio").value.trim();
+  const birthday = $("edit-birthday").value;
+  const country = $("edit-country").value.trim();
+  const district = $("edit-district").value.trim();
+  const photoURL = $("edit-photo-url").value.trim();
+  const coverURL = $("edit-cover-url").value.trim();
+
+  if (!displayName) {
+    return say($("profile-message"), "আপনার নাম লিখুন।");
+  }
+
+  if (displayName.length > 60 || bio.length > 150 ||
+      country.length > 80 || district.length > 80 ||
+      birthday.length > 10 || photoURL.length > 2048 ||
+      coverURL.length > 2048) {
+    return say($("profile-message"), "কোনো একটি তথ্য নির্ধারিত সীমার চেয়ে বড় হয়েছে।");
+  }
+
+  if (photoURL && !safeImageUrl(photoURL)) {
+    return say($("profile-message"), "Profile Photo URL সঠিক নয়।");
+  }
+
+  if (coverURL && !safeImageUrl(coverURL)) {
+    return say($("profile-message"), "Cover Photo URL সঠিক নয়।");
+  }
+
+  try {
+    say($("profile-message"), "Profile Save হচ্ছে…", true);
+
+    await updateDoc(doc(db, "users", currentUser.uid), {
+      displayName,
+      bio,
+      birthday,
+      country,
+      district,
+      photoURL,
+      coverURL
+    });
+
+    await updateProfile(currentUser, { displayName });
+
+    currentUser = auth.currentUser;
+    setUserDetails(currentUser);
+
+    updateProfilePreview({
+      displayName, bio, photoURL, coverURL
+    });
+
+    say($("profile-message"), "আপনার Profile সফলভাবে Save হয়েছে।", true);
+  } catch (error) {
+    say($("profile-message"), cleanError(error));
+  }
+});
