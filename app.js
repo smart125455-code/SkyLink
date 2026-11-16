@@ -1,4 +1,4 @@
-content://com.android.providers.downloads.documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2FSkyLink_Firebase_Starter%2FSkyLink%2Fapp.jscontent://com.android.providers.downloads.documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2FSkyLink_Firebase_Starter%2FSkyLink%2Fapp.jscontent://com.android.providers.downloads.documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2FSkyLink_Firebase_Starter%2FSkyLink%2Fapp.jsimport { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import {
   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
   sendEmailVerification, sendPasswordResetEmail, onAuthStateChanged,
