@@ -297,8 +297,8 @@ async function loadProfile() {
     $("edit-birthday").value = data.birthday || "";
     $("edit-country").value = data.country || "";
     $("edit-district").value = data.district || "";
-    $("edit-photo-url").value = data.photoURL || "";
-    $("edit-cover-url").value = data.coverURL || "";
+    const photoURL = $("edit-photo-url")?.value.trim() || "";
+const coverURL = $("edit-cover-url")?.value.trim() || "";
 
     updateProfilePreview({
       ...data,
