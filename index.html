@@ -9,7 +9,10 @@
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#"><span class="brand-mark">S</span><span>SkyLink</span></a>
+    <a class="brand" href="#">
+      <span class="brand-mark">S</span>
+      <span>SkyLink</span>
+    </a>
     <span class="tagline">Connect the World</span>
   </header>
 
@@ -21,7 +24,7 @@
         <p>SkyLink-এ নিজের প্রোফাইল তৈরি করুন, পোস্ট লিখুন এবং অন্যদের পোস্টে মন্তব্য করুন।</p>
         <div class="feature-row"><span>✦</span> Email verification সহ অ্যাকাউন্ট</div>
         <div class="feature-row"><span>✦</span> প্রোফাইল ও পোস্ট</div>
-        <div class="feature-row"><span>✦</span> পরে ফোন OTP যোগ করার সুযোগ</div>
+        <div class="feature-row"><span>✦</span> নিজের Bio তৈরি করুন</div>
       </div>
 
       <div class="auth-card">
@@ -49,7 +52,7 @@
           <label for="signup-password">পাসওয়ার্ড</label>
           <input id="signup-password" type="password" autocomplete="new-password" minlength="6" placeholder="কমপক্ষে ৬ অক্ষর" required>
           <button class="primary" type="submit">অ্যাকাউন্ট তৈরি করুন</button>
-          <p class="fineprint">অ্যাকাউন্ট চালু করতে আপনার ইমেইলে পাঠানো verification link খুলতে হবে।</p>
+          <p class="fineprint">অ্যাকাউন্ট চালু করতে ইমেইলের verification link খুলুন।</p>
         </form>
         <div id="auth-message" class="message" role="status" aria-live="polite"></div>
       </div>
@@ -59,7 +62,7 @@
       <div class="notice-icon">✉</div>
       <h1>ইমেইল যাচাই করুন</h1>
       <p id="verify-copy">আপনার ইমেইলে verification link পাঠানো হয়েছে।</p>
-      <p>Inbox না পেলে Spam/Junk ফোল্ডারও দেখুন। যাচাই করার পর নিচের বাটনে চাপ দিন।</p>
+      <p>Inbox না পেলে Spam/Junk ফোল্ডারও দেখুন।</p>
       <div class="actions">
         <button class="primary" id="check-verified" type="button">আমি ইমেইল যাচাই করেছি</button>
         <button class="secondary" id="resend-verification" type="button">আবার ইমেইল পাঠান</button>
@@ -70,33 +73,118 @@
 
     <section id="app-view" class="app-layout hidden">
       <aside class="sidebar">
-        <div class="mini-profile"><div id="avatar" class="avatar">S</div><div><strong id="profile-name">SkyLink User</strong><small id="profile-email"></small></div></div>
-        < class="nav-links"><a class="selected" href="#feed">⌂ <span>হোম</span></a><form id="post-form" class="composer" id="compose">< href="#profilemmmm
-        <button id="logout-button" class="secondary full">লগআউট</button>
+        <div class="mini-profile">
+          <div id="avatar" class="avatar">S</div>
+          <div>
+            <strong id="profile-name">SkyLink User</strong>
+            <small id="profile-email"></small>
+          </div>
+        </div>
+
+        <nav class="nav-links">
+          <a class="selected" id="home-link" href="#feed">⌂ <span>হোম</span></a>
+          <a id="profile-link" href="#profile">♙ <span>আমার প্রোফাইল</span></a>
+        </nav>
+
+        <button id="logout-button" class="secondary full" type="button">লগআউট</button>
       </aside>
 
-      <div class="feed-column">
+      <div class="feed-column" id="feed-view">
         <section class="welcome-banner">
-          <div><div class="eyebrow">WELCOME TO SKYLINK</div><h1>হ্যালো, <span id="welcome-name">বন্ধু</span> 👋</h1><p>আজ আপনার মনে কী আছে? শেয়ার করুন।</p></div>
+          <div>
+            <div class="eyebrow">WELCOME TO SKYLINK</div>
+            <h1>হ্যালো, <span id="welcome-name">বন্ধু</span> 👋</h1>
+            <p>আজ আপনার মনে কী আছে? শেয়ার করুন।</p>
+          </div>
           <div class="banner-orb">S</div>
         </section>
-<form id="post-form" class="composer">
-          <div class="composer-heading"><div class="avatar small" id="composer-avatar">S</div><strong>নতুন পোস্ট লিখুন</strong></div>
+
+        <form id="post-form" class="composer">
+          <div class="composer-heading">
+            <div class="avatar small" id="composer-avatar">S</div>
+            <strong>নতুন পোস্ট লিখুন</strong>
+          </div>
           <textarea id="post-text" maxlength="2000" rows="4" placeholder="আপনার ভাবনা শেয়ার করুন..." required></textarea>
-          <div class="composer-footer"><small>সর্বোচ্চ ২০০০ অক্ষর</small><button class="primary" type="submit">পোস্ট করুন ↗</button></div>
+          <div class="composer-footer">
+            <small>সর্বোচ্চ ২০০০ অক্ষর</small>
+            <button class="primary" type="submit">পোস্ট করুন ↗</button>
+          </div>
         </form>
 
-        <div class="section-heading"><h2>সাম্প্রতিক পোস্ট</h2><span class="live-dot">লাইভ ফিড</span></div>
-        <div id="feed-list" class="feed-list"><div class="empty-state">পোস্ট লোড হচ্ছে...</div></div>
+        <div class="section-heading">
+          <h2>সাম্প্রতিক পোস্ট</h2>
+          <span class="live-dot">লাইভ ফিড</span>
+        </div>
+        <div id="feed-list" class="feed-list">
+          <div class="empty-state">পোস্ট লোড হচ্ছে...</div>
+        </div>
+      </div>
+
+      <div class="feed-column hidden" id="profile-view">
+        <div class="section-heading">
+          <h2>আমার প্রোফাইল</h2>
+          <span>SkyLink</span>
+        </div>
+
+        <div class="panel-card">
+          <div id="profile-preview-cover" style="height:150px;background:#e7eafb;border-radius:12px;background-size:cover;background-position:center"></div>
+          <div style="padding:16px">
+            <div id="profile-preview-avatar" class="avatar" style="width:75px;height:75px">S</div>
+            <h2 id="profile-preview-name">আপনার নাম</h2>
+            <p id="profile-preview-bio">এখনো কোনো Bio লেখা হয়নি।</p>
+          </div>
+        </div>
+
+        <form id="profile-form" class="composer">
+          <h2>প্রোফাইল সম্পাদনা করুন</h2>
+
+          <label for="edit-display-name">আপনার নাম</label>
+          <input id="edit-display-name" type="text" maxlength="60" required>
+
+          <label for="edit-bio">Bio (সর্বোচ্চ ১৫০ অক্ষর)</label>
+          <textarea id="edit-bio" maxlength="150" rows="3" placeholder="নিজের সম্পর্কে কিছু লিখুন"></textarea>
+
+          <label for="edit-birthday">জন্মদিন</label>
+          <input id="edit-birthday" type="date">
+
+          <label for="edit-country">দেশ</label>
+          <input id="edit-country" type="text" maxlength="80" placeholder="Bangladesh">
+
+          <label for="edit-district">জেলা</label>
+          <input id="edit-district" type="text" maxlength="80" placeholder="আপনার জেলা">
+
+          <label for="edit-photo-url">Profile Photo URL</label>
+          <input id="edit-photo-url" type="url" maxlength="2048" placeholder="https://example.com/photo.jpg">
+
+          <label for="edit-cover-url">Cover Photo URL</label>
+          <input id="edit-cover-url" type="url" maxlength="2048" placeholder="https://example.com/cover.jpg">
+
+          <button class="primary" type="submit">প্রোফাইল Save করুন</button>
+          <div id="profile-message" class="message" role="status" aria-live="polite"></div>
+        </form>
       </div>
 
       <aside class="right-panel">
-        <div class="panel-card"><div class="panel-symbol">🌐</div><h3>SkyLink কমিউনিটি</h3><p>বন্ধুদের সঙ্গে যুক্ত হোন এবং নিজের গল্প শেয়ার করুন।</p></div>
-        <div class="panel-card privacy"><h3>🔒 আপনার নিরাপত্তা</h3><p>পাসওয়ার্ড কখনো প্রোফাইলে রাখা হয় না। ফোন নম্বর সংগ্রহ করা হচ্ছে না।</p></div>
-        <div class="panel-card"><h3>আপনার প্রোফাইল</h3><p>নাম: <strong id="side-name">—</strong></p><p>ইমেইল যাচাই: <strong class="verified-label">✓ Verified</strong></p><p class="fineprint">পরবর্তী সংস্করণে ছবি, Bio, বন্ধু, স্টোরি ও রিলস যোগ করা যাবে।</p></div>
+        <div class="panel-card">
+          <div class="panel-symbol">🌐</div>
+          <h3>SkyLink কমিউনিটি</h3>
+          <p>বন্ধুদের সঙ্গে যুক্ত হোন এবং নিজের গল্প শেয়ার করুন।</p>
+        </div>
+
+        <div class="panel-card privacy">
+          <h3>🔒 আপনার নিরাপত্তা</h3>
+          <p>পাসওয়ার্ড কখনো প্রোফাইলে রাখা হয় না।</p>
+        </div>
+
+        <div class="panel-card">
+          <h3>আপনার প্রোফাইল</h3>
+          <p>নাম: <strong id="side-name">—</strong></p>
+          <p>ইমেইল যাচাই: <strong class="verified-label">✓ Verified</strong></p>
+        </div>
       </aside>
     </section>
   </main>
+
   <footer>© <span id="year"></span> SkyLink · Connect the World, Share Your Life.</footer>
   <script type="module" src="app.js"></script>
 </body>
