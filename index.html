@@ -156,8 +156,12 @@
           <label for="edit-photo-url">Profile Photo URL</label>
           <input id="edit-photo-url" type="url" maxlength="2048" placeholder="https://example.com/photo.jpg">
 
-          <label for="edit-cover-url">Cover Photo URL</label>
-          <input id="edit-cover-url" type="url" maxlength="2048" placeholder="https://example.com/cover.jpg">
+          <label for="edit-cover-file">Cover Photo নির্বাচন করুন</label>
+<input
+  id="edit-cover-file"
+  type="file"
+  accept="image/*"
+>
 
           <button class="primary" type="submit">প্রোফাইল Save করুন</button>
           <div id="profile-message" class="message" role="status" aria-live="polite"></div>
