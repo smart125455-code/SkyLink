@@ -6,7 +6,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
   getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot,
-  serverTimestamp, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove
+serverTimestamp, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove,
+getDocs, where, deleteDoc
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
