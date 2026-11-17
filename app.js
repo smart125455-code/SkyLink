@@ -314,7 +314,13 @@ $("profile-link").addEventListener("click", async (event) => {
   showProfileSection("profile");
   await loadProfile();
 });
+$("friends-link").addEventListener("click", (event) => {
+  event.preventDefault();
 
+  $("feed-view").classList.add("hidden");
+  $("profile-view").classList.add("hidden");
+  $("friends-view").classList.remove("hidden");
+});
 $("home-link").addEventListener("click", (event) => {
   event.preventDefault();
   showProfileSection("feed");
