@@ -160,7 +160,16 @@ $("signup-form").addEventListener("submit", async (event) => {
     say(authMessage, "অ্যাকাউন্ট তৈরি হচ্ছে…", true);
     const result = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(result.user, { displayName: name });
-    await setDoc(doc(db, "users", result.user.uid), { displayName: name, email, createdAt: serverTimestamp() });
+    const username = name.toLowerCase()
+  .replace(/[^a-z0-9]/g, "") + 
+  Math.floor(1000 + Math.random() * 9000);
+
+await setDoc(doc(db, "users", result.user.uid), {
+  displayName: name,
+  username: username,
+  email: email,
+  createdAt: serverTimestamp()
+});
     await sendEmailVerification(result.user);
     say(authMessage, "");
     showVerification(result.user);
