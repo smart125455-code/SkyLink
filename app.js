@@ -164,11 +164,12 @@ $("signup-form").addEventListener("submit", async (event) => {
   .replace(/[^a-z0-9]/g, "") + 
   Math.floor(1000 + Math.random() * 9000);
 
-await setDoc(doc(db, "users", result.user.uid), {
-  displayName: name,
+await await setDoc(doc(db, "publicProfiles", username), {
+  uid: result.user.uid,
   username: username,
-  email: email,
+  displayName: name,
   createdAt: serverTimestamp()
+});
 });
     await sendEmailVerification(result.user);
     say(authMessage, "");
