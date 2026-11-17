@@ -228,7 +228,58 @@ $("post-form").addEventListener("submit", async (event) => {
     $("post-text").value = "";
   } catch (error) { alert(cleanError(error)); }
 });
+// FRIEND SEARCH
+$("friend-search-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
 
+  const username = $("friend-search-email").value
+    .trim().toLowerCase();
+
+  const results = $("friend-search-results");
+  results.textContent = "খোঁজা হচ্ছে...";
+
+  if (!username) {
+    results.textContent = "Username লিখুন।";
+    return;
+  }
+
+  try {
+    const result = await getDoc(
+      doc(db, "publicProfiles", username)
+    );
+
+    if (!result.exists()) {
+      results.textContent = "কোনো ব্যবহারকারী পাওয়া যায়নি।";
+      return;
+    }
+
+    const user = result.data();
+
+    if (user.uid === currentUser.uid) {
+      results.textContent = "এটি আপনার নিজের Profile।";
+      return;
+    }
+
+    results.innerHTML = "";
+
+    const name = document.createElement("p");
+    name.textContent = user.displayName + " (@" + user.username + ")";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = "Friend Request পাঠান";
+
+    results.append(name, button);
+
+    button.addEventListener("click", async () => {
+      // Friend Request functionality পরের ধাপে যোগ হবে।
+      alert("পরের ধাপে Friend Request চালু হবে।");
+    });
+
+  } catch (error) {
+    results.textContent = cleanError(error);
+  }
+});
 $("year").textContent = new Date().getFullYear();
 
 if (!isConfigured) {
