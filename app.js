@@ -554,10 +554,10 @@ $("friends-link").addEventListener("click", (event) => {
   event.preventDefault();
 
   $("feed-view").classList.add("hidden");
-  loadFriendRequests();
-loadFriends();
   $("profile-view").classList.add("hidden");
   $("friends-view").classList.remove("hidden");
+  loadFriendRequests();
+loadFriends();
 });
 $("home-link").addEventListener("click", (event) => {
   event.preventDefault();
