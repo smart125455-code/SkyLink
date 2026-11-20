@@ -330,6 +330,130 @@ $("friend-search-form").addEventListener("submit", async (event) => {
     results.textContent = cleanError(error);
   }
 });
+
+// LOAD FRIEND REQUESTS
+async function loadFriendRequests() {
+  const list = $("friend-requests-list");
+
+  if (!currentUser || !currentUser.emailVerified) return;
+
+  list.textContent = "Request লোড হচ্ছে...";
+
+  try {
+    const requestsQuery = query(
+      collection(db, "friendRequests"),
+      where("toUid", "==", currentUser.uid),
+      where("status", "==", "pending")
+    );
+
+    const snapshot = await getDocs(requestsQuery);
+    list.innerHTML = "";
+
+    if (snapshot.empty) {
+      list.textContent = "এখনো কোনো Friend Request নেই।";
+      return;
+    }
+
+    snapshot.forEach((requestDoc) => {
+      const request = requestDoc.data();
+
+      const item = document.createElement("div");
+      const info = document.createElement("p");
+      info.textContent = "নতুন Friend Request — User ID: " + request.fromUid;
+
+      const accept = document.createElement("button");
+      accept.type = "button";
+      accept.textContent = "Accept";
+
+      const reject = document.createElement("button");
+      reject.type = "button";
+      reject.textContent = "Reject";
+
+      accept.addEventListener("click", async () => {
+        try {
+          await updateDoc(
+            doc(db, "friendRequests", requestDoc.id),
+            { status: "accepted" }
+          );
+          await loadFriendRequests();
+          await loadFriends();
+        } catch (error) {
+          alert(cleanError(error));
+        }
+      });
+
+      reject.addEventListener("click", async () => {
+        try {
+          await updateDoc(
+            doc(db, "friendRequests", requestDoc.id),
+            { status: "rejected" }
+          );
+          await loadFriendRequests();
+        } catch (error) {
+          alert(cleanError(error));
+        }
+      });
+
+      item.append(info, accept, reject);
+      list.append(item);
+    });
+  } catch (error) {
+    list.textContent = cleanError(error);
+  }
+}
+
+// LOAD FRIENDS LIST
+async function loadFriends() {
+  const list = $("friends-list");
+
+  if (!currentUser || !currentUser.emailVerified) return;
+
+  list.textContent = "Friends List লোড হচ্ছে...";
+
+  try {
+    const sentQuery = query(
+      collection(db, "friendRequests"),
+      where("fromUid", "==", currentUser.uid),
+      where("status", "==", "accepted")
+    );
+
+    const receivedQuery = query(
+      collection(db, "friendRequests"),
+      where("toUid", "==", currentUser.uid),
+      where("status", "==", "accepted")
+    );
+
+    const [sent, received] = await Promise.all([
+      getDocs(sentQuery),
+      getDocs(receivedQuery)
+    ]);
+
+    list.innerHTML = "";
+
+    if (sent.empty && received.empty) {
+      list.textContent = "এখনো আপনার কোনো বন্ধু নেই।";
+      return;
+    }
+
+    function addFriend(uid) {
+      const item = document.createElement("p");
+      item.textContent = "বন্ধু — User ID: " + uid;
+      list.append(item);
+    }
+
+    sent.forEach((item) => {
+      addFriend(item.data().toUid);
+    });
+
+    received.forEach((item) => {
+      addFriend(item.data().fromUid);
+    });
+
+  } catch (error) {
+    list.textContent = cleanError(error);
+  }
+}
+
 $("year").textContent = new Date().getFullYear();
 
 if (!isConfigured) {
