@@ -277,10 +277,54 @@ $("friend-search-form").addEventListener("submit", async (event) => {
 
     results.append(name, button);
 
-    button.addEventListener("click", async () => {
-      // Friend Request functionality পরের ধাপে যোগ হবে।
-      alert("পরের ধাপে Friend Request চালু হবে।");
+  button.addEventListener("click", async () => {
+  if (!currentUser || !currentUser.emailVerified) {
+    alert("আগে Email Verify করুন।");
+    return;
+  }
+
+  try {
+    button.disabled = true;
+    button.textContent = "পাঠানো হচ্ছে...";
+
+    const requestId = [
+      currentUser.uid,
+      user.uid
+    ].sort().join("_");
+
+    const requestRef = doc(db, "friendRequests", requestId);
+    const existing = await getDoc(requestRef);
+
+    if (existing.exists()) {
+      const oldRequest = existing.data();
+
+      if (oldRequest.status === "accepted") {
+        button.textContent = "আপনারা ইতিমধ্যে বন্ধু";
+      } else if (oldRequest.fromUid === currentUser.uid) {
+        button.textContent = "Request পাঠানো হয়েছে";
+      } else {
+        button.textContent = "আপনার কাছে Request এসেছে";
+      }
+
+      return;
+    }
+
+    await setDoc(requestRef, {
+      fromUid: currentUser.uid,
+      toUid: user.uid,
+      status: "pending",
+      createdAt: serverTimestamp()
     });
+
+    button.textContent = "Request পাঠানো হয়েছে";
+    alert("Friend Request পাঠানো হয়েছে!");
+
+  } catch (error) {
+    button.disabled = false;
+    button.textContent = "Friend Request পাঠান";
+    alert(cleanError(error));
+  }
+});
 
   } catch (error) {
     results.textContent = cleanError(error);
