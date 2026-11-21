@@ -309,12 +309,17 @@ $("friend-search-form").addEventListener("submit", async (event) => {
       return;
     }
 
-    await setDoc(requestRef, {
-      fromUid: currentUser.uid,
-      toUid: user.uid,
-      status: "pending",
-      createdAt: serverTimestamp()
-    });
+  
+await setDoc(requestRef, {
+  fromUid: currentUser.uid,
+  toUid: user.uid,
+  fromName: nameFromUser(currentUser),
+  toName: user.displayName,
+  toUsername: user.username,
+  status: "pending",
+  createdAt: serverTimestamp()
+});
+    
 
     button.textContent = "Request পাঠানো হয়েছে";
     alert("Friend Request পাঠানো হয়েছে!");
