@@ -208,11 +208,47 @@
     <div id="friends-list">
       আপনার বন্ধুদের তালিকা এখানে দেখা যাবে।
     </div>
+    </div>
+
+</div>
+
+<!-- MESSENGER VIEW -->
+<div class="feed-column hidden" id="messenger-view">
+
+  <div class="card">
+    <h2>💬 Messenger</h2>
+    <p>বন্ধুদের সঙ্গে ব্যক্তিগতভাবে কথা বলুন।</p>
+  </div>
+
+  <div class="card">
+    <h3>আপনার Chats</h3>
+    <div id="chat-list">
+      <p>এখনো কোনো Chat শুরু হয়নি।</p>
+    </div>
+  </div>
+
+  <div class="card hidden" id="chat-panel">
+    <h3 id="chat-with-name">বন্ধুর নাম</h3>
+
+    <div id="message-list">
+      <p>কোনো Message নেই।</p>
+    </div>
+
+    <form id="message-form">
+      <input
+        id="message-text"
+        type="text"
+        placeholder="আপনার Message লিখুন..."
+        maxlength="2000"
+        required
+      >
+      <button class="primary" type="submit">পাঠান</button>
+    </form>
   </div>
 
 </div>
-      
-      <aside class="right-panel">
+
+<aside class="right-panel">
         <div class="panel-card">
           <div class="panel-symbol">🌐</div>
           <h3>SkyLink কমিউনিটি</h3>
