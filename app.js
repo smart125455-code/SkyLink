@@ -630,3 +630,249 @@ $("profile-form").addEventListener("submit", async (event) => {
     say($("profile-message"), cleanError(error));
   }
 });
+
+// ================================
+// MESSENGER - COMPLETE MESSAGE CODE
+// ================================
+
+let messengerStopMessages = null;
+
+// MESSENGER MENU
+$("messenger-link")?.addEventListener("click", async (event) => {
+  event.preventDefault();
+
+  $("feed-view")?.classList.add("hidden");
+  $("profile-view")?.classList.add("hidden");
+  $("friends-view")?.classList.add("hidden");
+  $("messenger-view")?.classList.remove("hidden");
+
+  await loadMessengerFriends();
+});
+
+// LOAD ACCEPTED FRIENDS
+async function loadMessengerFriends() {
+  if (!currentUser) return;
+
+  const chatList = $("chat-list");
+  chatList.innerHTML = "<p>বন্ধুদের খোঁজা হচ্ছে...</p>";
+
+  try {
+    const sentQuery = query(
+      collection(db, "friendRequests"),
+      where("fromUid", "==", currentUser.uid),
+      where("status", "==", "accepted")
+    );
+
+    const receivedQuery = query(
+      collection(db, "friendRequests"),
+      where("toUid", "==", currentUser.uid),
+      where("status", "==", "accepted")
+    );
+
+    const [sent, received] = await Promise.all([
+      getDocs(sentQuery),
+      getDocs(receivedQuery)
+    ]);
+
+    const friends = [];
+
+    sent.forEach((item) => {
+      const data = item.data();
+      friends.push({
+        uid: data.toUid,
+        name: data.toName || "বন্ধু"
+      });
+    });
+
+    received.forEach((item) => {
+      const data = item.data();
+      friends.push({
+        uid: data.fromUid,
+        name: data.fromName || "বন্ধু"
+      });
+    });
+
+    const uniqueFriends = [
+      ...new Map(friends.map(friend => [friend.uid, friend])).values()
+    ];
+
+    chatList.innerHTML = "";
+
+    if (uniqueFriends.length === 0) {
+      chatList.textContent = "আপনার কোনো Accepted Friend নেই।";
+      return;
+    }
+
+    uniqueFriends.forEach((friend) => {
+      const item = document.createElement("div");
+      item.className = "card";
+
+      const name = document.createElement("p");
+      name.textContent = friend.name;
+
+      const button = document.createElement("button");
+      button.className = "primary";
+      button.textContent = "Message করুন";
+
+      button.addEventListener("click", () => {
+        openMessengerChat(friend.uid, friend.name);
+      });
+
+      item.append(name, button);
+      chatList.appendChild(item);
+    });
+
+  } catch (error) {
+    console.error(error);
+    chatList.textContent =
+      "বন্ধুদের লোড করা যায়নি: " + error.message;
+  }
+}
+
+
+// OPEN CHAT
+async function openMessengerChat(otherUid, otherName) {
+  if (!currentUser || !otherUid) return;
+
+  const members = [
+    currentUser.uid,
+    otherUid
+  ].sort();
+
+  const chatId = members.join("_");
+  const chatRef = doc(db, "chats", chatId);
+
+  try {
+    const chatSnapshot = await getDoc(chatRef);
+
+    if (!chatSnapshot.exists()) {
+      await setDoc(chatRef, {
+        members: members,
+        createdAt: serverTimestamp()
+      });
+    }
+
+    $("chat-panel").classList.remove("hidden");
+    $("chat-with-name").textContent = otherName;
+
+    loadMessengerMessages(chatId);
+
+  } catch (error) {
+    console.error(error);
+    alert("Chat খুলতে সমস্যা হয়েছে: " + error.message);
+  }
+}
+
+
+// LOAD MESSAGES
+function loadMessengerMessages(chatId) {
+  if (messengerStopMessages) {
+    messengerStopMessages();
+    messengerStopMessages = null;
+  }
+
+  const messageList = $("message-list");
+  messageList.innerHTML = "<p>Message লোড হচ্ছে...</p>";
+
+  const messagesQuery = query(
+    collection(db, "chats", chatId, "messages"),
+    orderBy("createdAt", "asc"),
+    limit(100)
+  );
+
+  messengerStopMessages = onSnapshot(
+    messagesQuery,
+    (snapshot) => {
+      messageList.innerHTML = "";
+
+      if (snapshot.empty) {
+        messageList.textContent = "এখনো কোনো Message নেই।";
+        return;
+      }
+
+      snapshot.forEach((item) => {
+        const data = item.data();
+
+        const message = document.createElement("div");
+        message.className = "card";
+
+        const sender = document.createElement("strong");
+        sender.textContent =
+          data.senderUid === currentUser.uid
+            ? "আপনি"
+            : $("chat-with-name").textContent;
+
+        const text = document.createElement("p");
+        text.textContent = data.text;
+
+        message.append(sender, text);
+        messageList.appendChild(message);
+      });
+
+      messageList.scrollTop = messageList.scrollHeight;
+    },
+    (error) => {
+      console.error(error);
+      messageList.textContent =
+        "Message লোড করা যায়নি: " + error.message;
+    }
+  );
+}
+
+
+// SEND MESSAGE
+$("message-form")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!currentUser) return;
+
+  const input = $("message-text");
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  const chatName = $("chat-with-name").textContent;
+
+  try {
+    const friends = await getDocs(query(
+      collection(db, "friendRequests"),
+      where("status", "==", "accepted")
+    ));
+
+    let chatId = null;
+
+    friends.forEach((item) => {
+      const data = item.data();
+
+      if (
+        (data.fromUid === currentUser.uid ||
+         data.toUid === currentUser.uid) &&
+        data.status === "accepted" &&
+        (data.fromName === chatName || data.toName === chatName)
+      ) {
+        chatId = [data.fromUid, data.toUid].sort().join("_");
+      }
+    });
+
+    if (!chatId) {
+      alert("Chat খুঁজে পাওয়া যায়নি।");
+      return;
+    }
+
+    await addDoc(
+      collection(db, "chats", chatId, "messages"),
+      {
+        senderUid: currentUser.uid,
+        text: text,
+        createdAt: serverTimestamp()
+      }
+    );
+
+    input.value = "";
+
+  } catch (error) {
+    console.error(error);
+    alert("Message পাঠানো যায়নি: " + error.message);
+  }
+});
+
